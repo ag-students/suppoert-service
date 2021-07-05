@@ -1,8 +1,8 @@
 FROM golang:latest
 
-WORKDIR /communication
+WORKDIR /support-service
 
-ENV PROJ_ROOT=/communication
+ENV PROJ_ROOT=/support-service
 
 COPY . .
 
@@ -11,4 +11,4 @@ RUN echo "deb https://packagecloud.io/mattes/migrate/ubuntu/ xenial main" > /etc
 RUN apt-get update
 RUN apt-get install -y migrate
 
-RUN make build-app
+RUN make build
