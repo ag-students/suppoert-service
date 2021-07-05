@@ -10,20 +10,22 @@ APP=communication
 MIGRATION_TOOL=goose
 MIGRATIONS_DIR=migrations
 
-BASIC_IMAGE=default
+BASIC_IMAGE=dep
 IMAGE_POSTFIX=-image
 
-build-app:
-	go build -o .bin/${APP} cmd/${APP}/main.go
-	chmod ugo+x .bin/${APP}
+build:
+	go build -o .bin/communication cmd/communication/main.go
+	# go build -o .bin/docsgenerator cmd/docsgenerator/main.go
+	chmod ugo+x .bin/communication
+	# chmod ugo+x .bin/docsgenerator
 
 build-docker:
-	docker build -t ${BASIC_IMAGE} -f ${DOCKER_PATH}/builder.Dockerfile .
-	docker build -t ${APP}${IMAGE_POSTFIX} -f ${DOCKER_PATH}/${APP}.Dockerfile .
+	docker build -t ${BASIC_IMAGE} -f ${DOCKER_PATH}/builder.Dockerfile.dev .
+	docker build -t communication${IMAGE_POSTFIX} -f ${DOCKER_PATH}/communication.Dockerfile.dev .
 
 app-setup-and-up: build-docker app-up
 
-app-up: build-app
+app-up: build
 	docker-compose up
 
 all: app-setup-and-up
@@ -31,7 +33,7 @@ all: app-setup-and-up
 app-bash:
 	docker-compose run --rm --no-deps --name communication-service ${APP} bash
 
-app-up-local: build-app
+app-up-local: build
 	./.bin/communication
 
 db-bash:
@@ -45,13 +47,13 @@ db-up:
 	docker-compose run --rm --no-deps --name communication-db db ash
 
 db-migrate-status: goose-init
-	docker-compose run --rm events-server .bin/goose -dir ${MIGRATIONS_DIR} postgres \
+	docker-compose run --rm communication .bin/goose -dir ${MIGRATIONS_DIR} postgres \
 		"user=${POSTGRES_USER} host=${POSTGRES_HOST} port=${POSTGRES_PORT} password=${POSTGRES_DBPASSWORD} dbname=${POSTGRES_DBNAME} sslmode=${POSTGRES_SSL}" status
 
 db-migrate-up: goose-init
-	docker-compose run --rm events-server .bin/goose -dir ${MIGRATIONS_DIR} postgres \
+	docker-compose run --rm communication .bin/goose -dir ${MIGRATIONS_DIR} postgres \
         "user=${POSTGRES_USER} host=${POSTGRES_HOST} port=${POSTGRES_PORT} password=${POSTGRES_DBPASSWORD} dbname=${POSTGRES_DBNAME} sslmode=${POSTGRES_SSL}" up
 
 db-migrate-down: goose-init
-	docker-compose run --rm events-server .bin/goose -dir ${MIGRATIONS_DIR} postgres \
+	docker-compose run --rm communication .bin/goose -dir ${MIGRATIONS_DIR} postgres \
         "user=${POSTGRES_USER} host=${POSTGRES_HOST} port=${POSTGRES_PORT} password=${POSTGRES_DBPASSWORD} dbname=${POSTGRES_DBNAME} sslmode=${POSTGRES_SSL}" down
