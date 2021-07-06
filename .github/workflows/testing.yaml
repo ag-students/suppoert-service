@@ -1,0 +1,14 @@
+name: Integration testing
+
+on: [ push, pull_request]
+
+jobs:
+  tests:
+    runs-on: ubuntu-18.04
+    steps:
+      - name: Install Go
+        uses: actions/setup-go@v2
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Test
+        run: gotest -v ./...

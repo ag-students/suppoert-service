@@ -58,3 +58,6 @@ db-migrate-up: goose-init
 db-migrate-down: goose-init
 	docker-compose run --rm communication .bin/goose -dir ${MIGRATIONS_DIR} postgres \
         "user=${POSTGRES_USER} host=${POSTGRES_HOST} port=${POSTGRES_PORT} password=${POSTGRES_DBPASSWORD} dbname=${POSTGRES_DBNAME} sslmode=${POSTGRES_SSL}" down
+
+test:
+	gotest -v ./...
