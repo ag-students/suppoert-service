@@ -1,0 +1,7 @@
+FROM dep AS builder
+
+WORKDIR /support-service
+
+RUN chmod ugo+x .bin/communication
+
+CMD .bin/communication

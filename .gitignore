@@ -1,3 +1,10 @@
-/.bin/
+# IDE
 .idea
-/.database/
+
+# binaries
+.database
+.bin
+
+# go modules
+go.sum
+go.mod
