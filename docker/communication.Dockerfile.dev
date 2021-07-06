@@ -4,4 +4,4 @@ WORKDIR /support-service
 
 RUN chmod ugo+x .bin/communication
 
-CMD /support-service/.bin/communication
+CMD .bin/communication

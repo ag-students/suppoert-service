@@ -1,3 +1,10 @@
+# IDE
 .idea
+
+# binaries
 .database
 .bin
+
+# go modules
+go.sum
+go.mod
