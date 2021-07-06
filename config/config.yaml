@@ -1,0 +1,15 @@
+db:
+  postgres:
+    host: "communication-db"
+    port: "5432"
+    password: "12345678"
+    database: "communication"
+    user: "communication"
+    sslmode: "disable"
+
+mq:
+  kafka:
+    test: "test"
+
+communication-service:
+  queue-limit: "5"
