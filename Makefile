@@ -8,7 +8,7 @@ DOCKER_PATH := ${PROJ_PATH}/docker
 
 APP=communication
 MIGRATION_TOOL=goose
-MIGRATIONS_DIR=migrations
+MIGRATIONS_DIR=./db/migrations
 
 BASIC_IMAGE=dep
 IMAGE_POSTFIX=-image
@@ -47,17 +47,28 @@ goose-init:
 db-up:
 	docker-compose run --rm --no-deps --name communication-db db ash
 
+db-migration-create: goose-init
+	if [ -z ${lang} ] ; \
+	then \
+		goose -dir=${MIGRATIONS_DIR} create ${name} sql ; \
+	else \
+	  	goose -dir=${MIGRATIONS_DIR} create ${name} ${lang} ; \
+	fi ;
+
 db-migrate-status: goose-init
 	docker-compose run --rm communication .bin/goose -dir ${MIGRATIONS_DIR} postgres \
-		"user=${POSTGRES_USER} host=${POSTGRES_HOST} port=${POSTGRES_PORT} password=${POSTGRES_DBPASSWORD} dbname=${POSTGRES_DBNAME} sslmode=${POSTGRES_SSL}" status
+		"user=${POSTGRES_USER} host=${POSTGRES_HOST} port=${POSTGRES_PORT} password=${POSTGRES_PASSWORD} dbname=${POSTGRES_DB} sslmode=${POSTGRES_SSL}" status
 
 db-migrate-up: goose-init
 	docker-compose run --rm communication .bin/goose -dir ${MIGRATIONS_DIR} postgres \
-        "user=${POSTGRES_USER} host=${POSTGRES_HOST} port=${POSTGRES_PORT} password=${POSTGRES_DBPASSWORD} dbname=${POSTGRES_DBNAME} sslmode=${POSTGRES_SSL}" up
+        "user=${POSTGRES_USER} host=${POSTGRES_HOST} port=${POSTGRES_PORT} password=${POSTGRES_PASSWORD} dbname=${POSTGRES_DB} sslmode=${POSTGRES_SSL}" up
 
 db-migrate-down: goose-init
 	docker-compose run --rm communication .bin/goose -dir ${MIGRATIONS_DIR} postgres \
-        "user=${POSTGRES_USER} host=${POSTGRES_HOST} port=${POSTGRES_PORT} password=${POSTGRES_DBPASSWORD} dbname=${POSTGRES_DBNAME} sslmode=${POSTGRES_SSL}" down
+        "user=${POSTGRES_USER} host=${POSTGRES_HOST} port=${POSTGRES_PORT} password=${POSTGRES_PASSWORD} dbname=${POSTGRES_DB} sslmode=${POSTGRES_SSL}" down
 
 test:
 	gotest -v ./...
+
+packages-tidy:
+	go mod tidy
