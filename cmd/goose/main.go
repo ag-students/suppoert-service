@@ -15,7 +15,10 @@ var (
 )
 
 func main() {
-	flags.Parse(os.Args[1:])
+	if err := flags.Parse(os.Args[1:]); err != nil {
+		log.Fatal(err)
+	}
+
 	args := flags.Args()
 
 	if len(args) < 2 {
