@@ -3,6 +3,7 @@ module github.com/ag-students/support-service
 go 1.16
 
 require (
+	github.com/jackc/pgx/v4 v4.11.0
 	github.com/lib/pq v1.10.2
 	github.com/pressly/goose v2.7.0+incompatible
 	github.com/spf13/viper v1.8.1
