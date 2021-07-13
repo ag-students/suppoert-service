@@ -20,7 +20,7 @@ func getKafkaReader(kafkaURL, topic, groupID string) *kafka.Reader {
 	})
 }
 
-func Listen() {
+func Listen(ctx context.Context) {
 	// get kafka reader using environment variables.
 	kafkaURL := viper.GetString("KAFKA_URL")
 	topic := viper.GetString("TOPIC")
@@ -28,11 +28,16 @@ func Listen() {
 
 	reader := getKafkaReader(kafkaURL, topic, groupID)
 
-	defer reader.Close()
+	defer func(reader *kafka.Reader) {
+		err := reader.Close()
+		if err != nil {
+			log.Fatal("failed to close reader:", err)
+		}
+	}(reader)
 
 	fmt.Println("start consuming ... !!")
 	for {
-		m, err := reader.ReadMessage(context.Background())
+		m, err := reader.ReadMessage(ctx)
 		if err != nil {
 			log.Fatalln(err)
 		}
