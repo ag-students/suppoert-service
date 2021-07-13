@@ -4,3 +4,4 @@
 # binaries
 .database
 .bin
+.DS_store
