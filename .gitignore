@@ -1,6 +1,9 @@
 # IDE
 .idea
 
+*.pdf
+
 # binaries
 .database
 .bin
+.DS_store
