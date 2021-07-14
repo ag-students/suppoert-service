@@ -14,4 +14,10 @@ mq:
     group_id: "docsgen"
 
 communication-service:
-  queue-limit: "5"
+  kafka:
+    broker: "kafka:9093"
+    sms-topic: "communications"
+  message-bird:
+    access-key: "OnxQzf9lwc5W9lfXFLurKx3jU"
+    params: "MyReference"
+    originator: "vaccine.ru"

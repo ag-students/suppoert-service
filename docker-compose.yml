@@ -3,13 +3,14 @@ version: "3.7"
 services:
   communication:
     image: communication-image
+    container_name: communication-service
     volumes:
       - .:/support-service:cached
     ports:
       - 4000:4000
     depends_on:
       - db
-
+      
   docsgenerator:
     image: docsgenerator-image
     volumes:
@@ -34,12 +35,18 @@ services:
 
   zookeeper:
     image: wurstmeister/zookeeper
+    container_name: zookeeper
+    logging:
+      driver: none
     expose:
       - "2181"
   kafka:
     image: wurstmeister/kafka
     env_file:
       - config/kafka-variables.env
+    container_name: kafka
+    logging:
+      driver: none
     ports:
       - "9092:9092"
     expose:
@@ -54,6 +61,7 @@ services:
       KAFKA_OPTS: "-Djava.security.auth.login.config=/etc/kafka/kafka_server_jaas.conf"
       KAFKA_SASL_ENABLED_MECHANISMS: PLAIN
       KAFKA_SASL_MECHANISM_INTER_BROKER_PROTOCOL: PLAIN
+      ZOOKEEPER_SASL_ENABLED: 'false'
     depends_on:
       - zookeeper
     volumes:
