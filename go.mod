@@ -3,6 +3,7 @@ module github.com/ag-students/support-service
 go 1.16
 
 require (
+	github.com/jung-kurt/gofpdf v1.16.2
 	github.com/lib/pq v1.10.2
 	github.com/messagebird/go-rest-api v5.3.0+incompatible
 	github.com/messagebird/go-rest-api/v7 v7.0.0

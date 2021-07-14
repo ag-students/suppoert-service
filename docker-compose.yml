@@ -10,16 +10,15 @@ services:
       - 4000:4000
     depends_on:
       - db
-      - kafka
-#
-#  docsgenerator:
-#    image: docsgenerator-image
-#    volumes:
-#      - .:/docsgenerator:cached
-#    ports:
-#      - 4001:4001
-#    depends_on:
-#      - db
+      
+  docsgenerator:
+    image: docsgenerator-image
+    volumes:
+      - .:/docsgenerator:cached
+    ports:
+      - 4001:4001
+    depends_on:
+      - db
 
   db:
     restart: always
