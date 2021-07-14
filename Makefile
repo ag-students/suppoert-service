@@ -10,6 +10,7 @@ APP=communication
 MIGRATION_TOOL=goose
 MIGRATIONS_DIR=./db/migrations
 
+GUBUNTU_IMAGE=golang-ubuntu
 BASIC_IMAGE=dep
 IMAGE_POSTFIX=-image
 
@@ -72,3 +73,12 @@ test:
 
 packages-tidy:
 	go mod tidy
+
+# Kakafka
+
+kafka-bash:
+	docker exec -it kafka bash
+
+create-topic:
+	docker exec -it kafka /opt/kafka_2.13-2.7.0/bin/kafka-topics.sh \
+		--create --zookeeper zookeeper:2181 --replication-factor 1 --partitions 1 --topic ${name}
