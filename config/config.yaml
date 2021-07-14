@@ -7,12 +7,11 @@ db:
     user: "communication"
     sslmode: "disable"
 
-# TODO: выставить правильные параметры
 mq:
   kafka:
-    url: "localhost:9092"
-    topic: "Docs"
-    group_id: "1"
+    url: "kafka:9093"
+    topic: "docs_topic"
+    group_id: "docsgen"
 
 communication-service:
   queue-limit: "5"
