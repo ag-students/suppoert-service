@@ -7,6 +7,12 @@ db:
     user: "communication"
     sslmode: "disable"
 
+mq:
+  kafka:
+    url: "kafka:9093"
+    topic: "docs_topic"
+    group_id: "docsgen"
+
 communication-service:
   kafka:
     broker: "kafka:9093"

@@ -42,6 +42,8 @@ services:
       - "2181"
   kafka:
     image: wurstmeister/kafka
+    env_file:
+      - config/kafka-variables.env
     container_name: kafka
     logging:
       driver: none
