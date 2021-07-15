@@ -38,5 +38,5 @@ jobs:
 
       - name: Run linters
         run: |
-          golangci-lint run
+#          golangci-lint run
 
