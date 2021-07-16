@@ -10,7 +10,7 @@ services:
       - 4000:4000
     depends_on:
       - db
-      
+
   docsgenerator:
     image: docsgenerator-image
     container_name: docsgenerator-service
@@ -21,7 +21,6 @@ services:
     depends_on:
       - db
 
-      
   minio1:
     image: minio/minio
     container_name: minio1

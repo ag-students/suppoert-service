@@ -1,23 +1,27 @@
 package main
 
 import (
-	"fmt"
 	"github.com/ag-students/support-service/config"
 	"github.com/ag-students/support-service/internal/microservices/communication/delivery/mq"
 	"github.com/ag-students/support-service/internal/microservices/communication/repository"
 	"github.com/ag-students/support-service/internal/microservices/communication/repository/postgres"
 	"github.com/ag-students/support-service/internal/microservices/communication/services"
+	"github.com/ag-students/support-service/utils"
 	"github.com/spf13/viper"
-	"log"
+	"os"
+	"os/signal"
+	"syscall"
 	"time"
 )
 
 func main() {
-	log.Print("Starting communication service...")
+	logger.InitLogger()
+
+	logger.Logger.Info("Starting communication service...")
 
 	config.Init()
 
-	log.Print("Connecting to the database...")
+	logger.Logger.Info("Connecting to the database...")
 	conn, err := postgres.EstablishPSQLConnection(&postgres.PSQLConfig{
 		Host:     viper.GetString("db.postgres.host"),
 		Port:     viper.GetString("db.postgres.port"),
@@ -27,19 +31,17 @@ func main() {
 		SSLMode:  viper.GetString("db.postgres.sslmode"),
 	})
 	if err != nil {
-		log.Fatal(err)
+		logger.Logger.Error(err.Error())
 	}
 
 	defer func() {
 		if err := conn.Close(); err != nil {
-			log.Println("error while closing connection: " + err.Error())
+			logger.Logger.Error(err.Error())
 		}
 	}()
-	log.Print("Connection established!")
+	logger.Logger.Info("Connection established!")
 
 	repo := repository.NewRepository(conn)
-
-	fmt.Println(repo)
 
 	time.Sleep(time.Second * 5)
 
@@ -49,22 +51,30 @@ func main() {
 			Originator: viper.GetString("communication-service.message-bird.originator"),
 			Params:     viper.GetString("communication-service.message-bird.params"),
 		}),
-		EmailNotifier: nil,
+		EmailNotifier: services.NewEmailNotificator(repo, &services.SMTPConfig{
+			Host:     viper.GetString("communication-service.smtp-config.host"),
+			Port:     viper.GetInt("communication-service.smtp-config.port"),
+			Username: viper.GetString("communication-service.smtp-config.username"),
+			Password: viper.GetString("communication-service.smtp-config.password"),
+		}),
 	}
-
-	log.Println(serv)
-
-	time.Sleep(time.Second * 6)
-	log.Print("Connecting to kafka...")
 
 	consumers := &mq.KafkaConsumers{
 		KafkaSMSConsumer: mq.NewKafkaSMSConsumer(serv, &mq.KafkaConfig{
 			Brokers: []string{viper.GetString("communication-service.kafka.broker")},
 			Topic:   viper.GetString("communication-service.kafka.sms-topic"),
 		}),
+		KafkaEmailConsumer: mq.NewKafkaEmailConsumer(serv, &mq.KafkaConfig{
+			Brokers: []string{viper.GetString("communication-service.kafka.broker")},
+			Topic:   viper.GetString("communication-service.kafka.email-topic"),
+		}),
 	}
 
 	consumers.StartConsumers()
 
-	log.Print("Service gracefully stopped.")
+	quit := make(chan os.Signal, 1)
+	signal.Notify(quit, syscall.SIGTERM, syscall.SIGINT)
+	<-quit
+
+	logger.Logger.Info("Service gracefully stopped.")
 }

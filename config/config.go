@@ -1,8 +1,8 @@
 package config
 
 import (
+	"github.com/ag-students/support-service/utils"
 	"github.com/spf13/viper"
-	"log"
 )
 
 const Directory = "./config"
@@ -18,7 +18,7 @@ func Init() {
 		viper.SetConfigName(filePath)
 		err := viper.MergeInConfig()
 		if err != nil {
-			log.Fatal(err)
+			logger.Logger.Fatalf("failed to open config file: %s", err.Error())
 		}
 	}
 }

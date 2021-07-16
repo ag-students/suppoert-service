@@ -16,8 +16,15 @@ mq:
 communication-service:
   kafka:
     broker: "kafka:9093"
-    sms-topic: "communications"
+    sms-topic: "sms"
+    email-topic: "email"
   message-bird:
     access-key: "OnxQzf9lwc5W9lfXFLurKx3jU"
     params: "MyReference"
     originator: "vaccine.ru"
+  smtp-config:
+    host: "smtp.yandex.ru"
+    port: 25
+    username: "noreply@shirnis-koronoy.ga"
+    password: "korona12345"
+

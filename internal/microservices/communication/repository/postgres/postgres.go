@@ -3,8 +3,8 @@ package postgres
 import (
 	"database/sql"
 	"fmt"
+	"github.com/ag-students/support-service/utils"
 	_ "github.com/lib/pq"
-	"log"
 )
 
 type PSQLConfig struct {
@@ -29,7 +29,7 @@ func EstablishPSQLConnection(cnf *PSQLConfig) (*sql.DB, error) {
 	if err != nil {
 		return nil, err
 	}
-	log.Println(fmt.Sprintf("Connected to db: %s", cnf.DBName))
+	logger.Logger.Info(fmt.Sprintf("Connected to db: %s", cnf.DBName))
 
 	return db, nil
 }
