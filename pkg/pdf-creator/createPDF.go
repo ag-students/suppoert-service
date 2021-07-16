@@ -7,9 +7,9 @@ import (
 )
 
 func CreatePDF(surname, name, patronymic string) *gofpdf.Fpdf {
-	pwd, err1 := os.Getwd()
-	if err1 != nil {
-		fmt.Println(err1)
+	pwd, err := os.Getwd()
+	if err != nil {
+		fmt.Println(err)
 	}
 
 	pdf := gofpdf.New("L", "mm", "A4", pwd+"/pkg/pdf-creator/font")
@@ -36,7 +36,7 @@ func CreatePDF(surname, name, patronymic string) *gofpdf.Fpdf {
 	pdf.SetFont("Helvetica", "", 13)
 	pdf.SetXY(45, 212)
 	pdf.Cell(20, -23, tr("Не явлется официальным документом! Разработано исключительно в образовательных целях"))
-	err := pdf.OutputFileAndClose("passport.pdf")
+	err = pdf.OutputFileAndClose("passport.pdf")
 	if err != nil {
 		fmt.Println("⚠️  Could not save PDF:", err)
 	} else {
