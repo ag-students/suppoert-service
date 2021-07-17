@@ -44,4 +44,5 @@ func main() {
 	name := "Иван"
 	patronymic := "Иванович"
 	pdf_creator.CreatePDF(surname, name, patronymic)
+	fmt.Println(surname)
 }

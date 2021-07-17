@@ -1,3 +1,4 @@
+#!/bin/sh
 version: "3.7"
 
 services:
@@ -5,7 +6,7 @@ services:
     image: communication-image
     container_name: communication-service
     volumes:
-      - .:/communication:cached
+      - .:/support-service:cached
     ports:
       - 4000:4000
     depends_on:
