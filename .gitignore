@@ -4,6 +4,8 @@
 *.pdf
 
 # binaries
-.database
-.bin
+.bin/
 .DS_store
+
+.database/
+database/

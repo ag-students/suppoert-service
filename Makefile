@@ -10,7 +10,6 @@ APP=communication
 MIGRATION_TOOL=goose
 MIGRATIONS_DIR=./db/migrations
 
-GUBUNTU_IMAGE=golang-ubuntu
 BASIC_IMAGE=dep
 IMAGE_POSTFIX=-image
 
