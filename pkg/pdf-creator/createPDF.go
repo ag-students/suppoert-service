@@ -2,11 +2,12 @@ package pdf_creator
 
 import (
 	"fmt"
-	"github.com/jung-kurt/gofpdf"
 	"os"
+
+	"github.com/jung-kurt/gofpdf"
 )
 
-func CreatePDF(surname, name, patronymic string) *gofpdf.Fpdf {
+func CreatePDF(surname, name, patronymic, time string) *gofpdf.Fpdf {
 	pwd, err := os.Getwd()
 	if err != nil {
 		fmt.Println(err)
@@ -36,7 +37,8 @@ func CreatePDF(surname, name, patronymic string) *gofpdf.Fpdf {
 	pdf.SetFont("Helvetica", "", 13)
 	pdf.SetXY(45, 212)
 	pdf.Cell(20, -23, tr("Не явлется официальным документом! Разработано исключительно в образовательных целях"))
-	err = pdf.OutputFileAndClose("passport.pdf")
+	
+	err = pdf.OutputFileAndClose(time + "_passport.pdf")
 	if err != nil {
 		fmt.Println("⚠️  Could not save PDF:", err)
 	} else {

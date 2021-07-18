@@ -24,6 +24,7 @@ services:
       
   minio1:
     image: minio/minio
+    container_name: minio1
     hostname: minio1
     volumes:
       - ./minio/data1-1:/data1
@@ -43,6 +44,7 @@ services:
 
   minio2:
     image: minio/minio
+    container_name: minio2
     hostname: minio2
     volumes:
       - ./minio/data2-1:/data1
@@ -62,6 +64,7 @@ services:
 
   minio3:
     image: minio/minio
+    container_name: minio3
     hostname: minio3
     volumes:
       - ./minio/data3-1:/data1
@@ -81,6 +84,7 @@ services:
 
   minio4:
     image: minio/minio
+    container_name: minio4
     hostname: minio4
     volumes:
       - ./minio/data4-1:/data1
@@ -100,6 +104,7 @@ services:
 
   nginx:
     image: nginx:1.19.2-alpine
+    container_name: nginx
     hostname: nginx
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf:ro

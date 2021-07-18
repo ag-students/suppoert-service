@@ -15,7 +15,7 @@ import (
 )
 
 func main() {
-	time.Sleep(time.Second * 1)
+	time.Sleep(time.Second * 5)
 	fmt.Println("Hello, World! I generate docs")
 	config.Init()
 
@@ -45,10 +45,11 @@ func main() {
 	surname := "Иванов"
 	name := "Иван"
 	patronymic := "Иванович"
-	pdf_creator.CreatePDF(surname, name, patronymic)
+	time :=time.Now().String()
+	pdf_creator.CreatePDF(surname, name, patronymic, time)
 
 
-	endpoint := "172.23.0.2:9000"
+	endpoint := "172.19.0.1:9000"
     accessKeyID := "minio"
     secretAccessKey := "minio123"
     useSSL := false
@@ -63,26 +64,27 @@ func main() {
         log.Fatalln(err)
     }
 
-    // Make a new bucket called mymusic.
+    // Make a new bucket
     bucketName := "passports"
-    location := "my_region"
+    // location := "my_region"
 
-    err = minioClient.MakeBucket(ctx, bucketName, minio.MakeBucketOptions{Region: location})
-    if err != nil {
-        // Check to see if we already own this bucket (which happens if you run this twice)
-        exists, errBucketExists := minioClient.BucketExists(ctx, bucketName)
-        if errBucketExists == nil && exists {
-            log.Printf("We already own %s\n", bucketName)
-        } else {
-            log.Fatalln(err)
-        }
-    } else {
-        log.Printf("Successfully created %s\n", bucketName)
-    }
+    // err = minioClient.MakeBucket(ctx, bucketName, minio.MakeBucketOptions{Region: location})
+    // if err != nil {
+    //     // Check to see if we already own this bucket (which happens if you run this twice)
+    //     exists, errBucketExists := minioClient.BucketExists(ctx, bucketName)
+    //     if errBucketExists == nil && exists {
+    //         log.Printf("We already own %s\n", bucketName)
+    //     } else {
+    //         log.Fatalln(err)
+    //     }
+    // } else {
+    //     log.Printf("Successfully created %s\n", bucketName)
+    // }
 
-    // Upload the zip file
-    objectName := "passport.pdf"
-    filePath := "./passport.pdf"
+    // Upload the file
+	
+    objectName := time + "_passport.pdf"
+    filePath := "./" + time + "_passport.pdf"
     contentType := "application/pdf"
 
     // Upload the zip file with FPutObject

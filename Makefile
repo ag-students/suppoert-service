@@ -21,7 +21,6 @@ build:
 
 build-docker:
 	sudo rm -rf .database/
-	sudo rm -rf .minio/
 	docker build -t ${BASIC_IMAGE} -f ${DOCKER_PATH}/builder.Dockerfile.dev .
 	docker build -t communication${IMAGE_POSTFIX} -f ${DOCKER_PATH}/communication.Dockerfile.dev .
 	docker build -t docsgenerator${IMAGE_POSTFIX} -f ${DOCKER_PATH}/docsgenerator.Dockerfile.dev .
