@@ -3,11 +3,10 @@ package pdf_creator
 import (
 	"fmt"
 	"os"
-
 	"github.com/jung-kurt/gofpdf"
 )
 
-func CreatePDF(surname, name, patronymic, time string) *gofpdf.Fpdf {
+func CreatePDF(surname, name, patronymic, pdf_name string)  {
 	pwd, err := os.Getwd()
 	if err != nil {
 		fmt.Println(err)
@@ -38,7 +37,7 @@ func CreatePDF(surname, name, patronymic, time string) *gofpdf.Fpdf {
 	pdf.SetXY(45, 212)
 	pdf.Cell(20, -23, tr("Не явлется официальным документом! Разработано исключительно в образовательных целях"))
 	
-	err = pdf.OutputFileAndClose(time + "_passport.pdf")
+	err = pdf.OutputFileAndClose(pdf_name)
 	if err != nil {
 		fmt.Println("⚠️  Could not save PDF:", err)
 	} else {
@@ -46,5 +45,4 @@ func CreatePDF(surname, name, patronymic, time string) *gofpdf.Fpdf {
 		// docker cp <container_name>:/support-service/passport.pdf ./
 		// чтобы достать файл из контейнера
 	}
-	return pdf
 }

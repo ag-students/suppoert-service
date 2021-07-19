@@ -3,15 +3,15 @@ package main
 import (
 	"context"
 	"fmt"
+	"log"
+	"time"
 	"github.com/ag-students/support-service/config"
+	"github.com/ag-students/support-service/internal/microservices/docsgenerator/services"
 	"github.com/ag-students/support-service/pkg/kafka-impl"
 	"github.com/ag-students/support-service/pkg/pdf-creator"
 	"github.com/segmentio/kafka-go"
 	"github.com/spf13/viper"
-	"log"
-	"time"
-	"github.com/minio/minio-go/v7"
-	"github.com/minio/minio-go/v7/pkg/credentials"
+	"github.com/dchest/uniuri"
 )
 
 func main() {
@@ -42,56 +42,14 @@ func main() {
 	}(reader)
 	go kafka_impl.Listen(ctx, reader)
 
-	surname := "Иванов"
+	surname := uniuri.NewLen(10)
 	name := "Иван"
 	patronymic := "Иванович"
-	time :=time.Now().String()
-	pdf_creator.CreatePDF(surname, name, patronymic, time)
+	pdf_name := surname + "passport.pdf"
 
+	//create PDF file
+	pdf_creator.CreatePDF(surname, name, patronymic, pdf_name)
 
-	endpoint := "172.19.0.1:9000"
-    accessKeyID := "minio"
-    secretAccessKey := "minio123"
-    useSSL := false
-
-
-    // Initialize minio client object.
-    minioClient, err := minio.New(endpoint, &minio.Options{
-        Creds:  credentials.NewStaticV4(accessKeyID, secretAccessKey, ""),
-        Secure: useSSL,
-    })
-    if err != nil {
-        log.Fatalln(err)
-    }
-
-    // Make a new bucket
-    bucketName := "passports"
-    // location := "my_region"
-
-    // err = minioClient.MakeBucket(ctx, bucketName, minio.MakeBucketOptions{Region: location})
-    // if err != nil {
-    //     // Check to see if we already own this bucket (which happens if you run this twice)
-    //     exists, errBucketExists := minioClient.BucketExists(ctx, bucketName)
-    //     if errBucketExists == nil && exists {
-    //         log.Printf("We already own %s\n", bucketName)
-    //     } else {
-    //         log.Fatalln(err)
-    //     }
-    // } else {
-    //     log.Printf("Successfully created %s\n", bucketName)
-    // }
-
-    // Upload the file
-	
-    objectName := time + "_passport.pdf"
-    filePath := "./" + time + "_passport.pdf"
-    contentType := "application/pdf"
-
-    // Upload the zip file with FPutObject
-    info, err := minioClient.FPutObject(ctx, bucketName, objectName, filePath, minio.PutObjectOptions{ContentType: contentType})
-    if err != nil {
-        log.Fatalln(err)
-    }
-
-    log.Printf("Successfully uploaded %s of size %d\n", objectName, info.Size)
+	//Uppload PDF file to minIO
+	services.UploadNewFile(pdf_name)
 }
