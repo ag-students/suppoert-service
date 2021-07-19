@@ -6,20 +6,27 @@ import (
 	"github.com/minio/minio-go/v7/pkg/credentials"
 	"log"
 	"os"
+	"fmt"
 )
 
 // Initialize minio client object.
 func NewClient() *minio.Client {
-	endpoint := "172.19.0.1:9000"
+
+	//Warning! Can change after make app-setup-and-up
+	endpoint := "172.18.0.2:9000"
+
 	accessKeyID := os.Getenv("MINIO_ACCESS_KEY")
 	secretAccessKey := os.Getenv("MINIO_SECRET_ACCESS_KEY")
 	useSSL := false
+
 	minioClient, err := minio.New(endpoint, &minio.Options{
 		Creds:  credentials.NewStaticV4(accessKeyID, secretAccessKey, ""),
 		Secure: useSSL,
 	})
 	if err != nil {
-		log.Fatalln(err)
+		log.Fatalln("Failed to create minio client:", err)
+	} else {
+		fmt.Println("Successfully created minio client")
 	}
 	return minioClient
 }
@@ -36,7 +43,7 @@ func NewBucket(bucketName string) {
 		if errBucketExists == nil && exists {
 			log.Printf("We already own %s\n", bucketName)
 		} else {
-			log.Fatalln(err)
+			log.Fatalln("Failed to create bucket: ", err)
 		}
 	} else {
 		log.Printf("Successfully created %s\n", bucketName)
@@ -52,7 +59,8 @@ func UploadNewFile(objectName string) {
 	contentType := "application/" + objectName[len(objectName)-3:]
 	info, err := minioClient.FPutObject(ctx, bucketName, objectName, filePath, minio.PutObjectOptions{ContentType: contentType})
 	if err != nil {
-		log.Fatalln(err)
+		log.Fatalln("Failed to upload:", err)
+	} else {
+		log.Printf("Successfully uploaded %s of size %d\n", objectName, info.Size)
 	}
-	log.Printf("Successfully uploaded %s of size %d\n", objectName, info.Size)
 }
