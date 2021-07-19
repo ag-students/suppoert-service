@@ -19,18 +19,18 @@ func main() {
 
 	log.Print("Connecting to the database...")
 	conn, err := postgres.EstablishPSQLConnection(&postgres.PSQLConfig{
-		Host: viper.GetString("db.postgres.host"),
-		Port: viper.GetString("db.postgres.port"),
+		Host:     viper.GetString("db.postgres.host"),
+		Port:     viper.GetString("db.postgres.port"),
 		Password: viper.GetString("db.postgres.password"),
-		DBName: viper.GetString("db.postgres.database"),
+		DBName:   viper.GetString("db.postgres.database"),
 		Username: viper.GetString("db.postgres.user"),
-		SSLMode: viper.GetString("db.postgres.sslmode"),
+		SSLMode:  viper.GetString("db.postgres.sslmode"),
 	})
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	defer func () {
+	defer func() {
 		if err := conn.Close(); err != nil {
 			log.Println("error while closing connection: " + err.Error())
 		}
@@ -44,10 +44,10 @@ func main() {
 	time.Sleep(time.Second * 5)
 
 	serv := &services.Service{
-		SMSNotifier:   services.NewMessageBird(repo, &services.MessageBirdConfig{
-			AccessKey: viper.GetString("communication-service.message-bird.access-key"),
+		SMSNotifier: services.NewMessageBird(repo, &services.MessageBirdConfig{
+			AccessKey:  viper.GetString("communication-service.message-bird.access-key"),
 			Originator: viper.GetString("communication-service.message-bird.originator"),
-			Params:    viper.GetString("communication-service.message-bird.params"),
+			Params:     viper.GetString("communication-service.message-bird.params"),
 		}),
 		EmailNotifier: nil,
 	}

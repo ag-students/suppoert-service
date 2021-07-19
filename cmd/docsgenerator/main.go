@@ -3,15 +3,15 @@ package main
 import (
 	"context"
 	"fmt"
-	"log"
-	"time"
 	"github.com/ag-students/support-service/config"
 	"github.com/ag-students/support-service/internal/microservices/docsgenerator/services"
 	"github.com/ag-students/support-service/pkg/kafka-impl"
 	"github.com/ag-students/support-service/pkg/pdf-creator"
+	"github.com/dchest/uniuri"
 	"github.com/segmentio/kafka-go"
 	"github.com/spf13/viper"
-	"github.com/dchest/uniuri"
+	"log"
+	"time"
 )
 
 func main() {

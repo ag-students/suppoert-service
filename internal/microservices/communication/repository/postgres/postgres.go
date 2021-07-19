@@ -8,12 +8,12 @@ import (
 )
 
 type PSQLConfig struct {
-	Host 		string
-	Port 		string
-	Username 	string
-	Password 	string
-	DBName 		string
-	SSLMode 	string
+	Host     string
+	Port     string
+	Username string
+	Password string
+	DBName   string
+	SSLMode  string
 }
 
 const driverName = "postgres"
