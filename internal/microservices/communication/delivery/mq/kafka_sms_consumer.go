@@ -10,15 +10,15 @@ import (
 )
 
 type KafkaSMSConsumer struct {
-	serv 	services.SMSNotifier
-	cnf  	*KafkaConfig
-	reader 	*kafka.Reader
+	serv   services.SMSNotifier
+	cnf    *KafkaConfig
+	reader *kafka.Reader
 }
 
 func NewKafkaSMSConsumer(serv *services.Service, cnf *KafkaConfig) KafkaSMSConsumer {
 	return KafkaSMSConsumer{
-		serv: 	serv.SMSNotifier,
-		cnf: 	cnf,
+		serv: serv.SMSNotifier,
+		cnf:  cnf,
 	}
 }
 
@@ -47,5 +47,3 @@ func (r *KafkaSMSConsumer) ConsumeSMSRequests() error {
 		log.Printf("message at topic/partition/offset %v/%v/%v: %s\n", m.Topic, m.Partition, m.Offset, string(m.Value))
 	}
 }
-
-

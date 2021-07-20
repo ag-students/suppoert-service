@@ -14,8 +14,9 @@ BASIC_IMAGE=dep
 IMAGE_POSTFIX=-image
 
 build:
-	go build -o .bin/communication cmd/communication/main.go
-	go build -o .bin/docsgenerator cmd/docsgenerator/main.go
+	sudo rm -rf *.pdf
+	GOOS=linux GOARCH=arm go build -o .bin/communication cmd/communication/main.go
+	GOOS=linux GOARCH=arm go build -o .bin/docsgenerator cmd/docsgenerator/main.go
 	chmod ugo+x .bin/communication
 	chmod ugo+x .bin/docsgenerator
 

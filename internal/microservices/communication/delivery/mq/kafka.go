@@ -14,7 +14,7 @@ type KafkaConsumers struct {
 
 type KafkaConfig struct {
 	Brokers []string
-	Topic 	string
+	Topic   string
 }
 
 func GetKafkaReader(cnf *KafkaConfig) *kafka.Reader {
@@ -34,7 +34,7 @@ func (r *KafkaConsumers) StartConsumers() {
 	wg := &sync.WaitGroup{}
 
 	wg.Add(1)
-	go func () {
+	go func() {
 		if err := r.KafkaSMSConsumer.ConsumeSMSRequests(); err != nil {
 			log.Panic("error while starting consumers: " + err.Error())
 		}
@@ -42,7 +42,7 @@ func (r *KafkaConsumers) StartConsumers() {
 	}()
 	wg.Wait()
 
-	defer func () {
+	defer func() {
 		if err := r.KafkaSMSConsumer.reader.Close(); err != nil {
 			log.Printf("error while trying close sms consumer: " + err.Error())
 		}

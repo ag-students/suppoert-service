@@ -9,20 +9,20 @@ import (
 )
 
 type MessageBirdConfig struct {
-	AccessKey 	string
-	Originator	string
-	Params 		string
+	AccessKey  string
+	Originator string
+	Params     string
 }
 
 type MessageBird struct {
-	repo 	*repository.Repository
-	client 	*messagebird.Client
-	config 	*MessageBirdConfig
+	repo   *repository.Repository
+	client *messagebird.Client
+	config *MessageBirdConfig
 }
 
 func NewMessageBird(repo *repository.Repository, cnf *MessageBirdConfig) *MessageBird {
 	return &MessageBird{
-		repo: repo,
+		repo:   repo,
 		client: messagebird.New(cnf.AccessKey),
 		config: cnf,
 	}
