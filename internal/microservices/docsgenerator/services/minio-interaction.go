@@ -2,11 +2,11 @@ package services
 
 import (
 	"context"
+	"fmt"
 	"github.com/minio/minio-go/v7"
 	"github.com/minio/minio-go/v7/pkg/credentials"
 	"log"
 	"os"
-	"fmt"
 )
 
 // Initialize minio client object.
