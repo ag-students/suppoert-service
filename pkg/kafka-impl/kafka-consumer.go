@@ -1,9 +1,8 @@
 package kafka_impl
 
 import (
-	"bytes"
 	"context"
-	"encoding/binary"
+	"encoding/json"
 	"fmt"
 	pdf_creator "github.com/ag-students/support-service/pkg/pdf-creator"
 	"github.com/segmentio/kafka-go"
@@ -30,16 +29,14 @@ func GetKafkaReader(kafkaURL, topic, groupID string) *kafka.Reader {
 
 func handleMessage(message kafka.Message) error {
 	if string(message.Key) == "DataForDocument" {
-		data := DataForDocument{}
-		buf := &bytes.Buffer{}
-		buf.Write(message.Value)
-		err := binary.Read(buf, binary.BigEndian, &data)
+		data := pdf_creator.PatientPersonalData{}
+		err := json.Unmarshal(message.Value, &data)
 		if err != nil {
 			log.Fatalf("Failed to convert message '%s' to struct", message.Key)
 			return err
 		} else {
 			log.Printf("Key: %s\nValue: %s\n", message.Key, data)
-			pdf_creator.CreatePDF(data.surname, data.name, data.patronymic)
+			pdf_creator.CreatePDF(&data)
 			return nil
 		}
 	}

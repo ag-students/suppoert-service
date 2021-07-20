@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"log"
 
@@ -20,6 +21,25 @@ func main() {
 	fmt.Println("Hello, World! I generate docs")
 	config.Init()
 
+	newPatient := &pdf_creator.PatientPersonalData{
+		Surname:     uniuri.NewLen(10),
+		Name:        "Иван",
+		Patronymic:  "Иванович",
+		Birthday:    "01.01.2000",
+		Gender:      "мужской",
+		HomeAddress: "Москва, Красная 213",
+		FirstDate:   "01.08.2021",
+		SecondDate:  "22.08.2021",
+		Vaccine:     "Спутник-V",
+		PdfName:     "passport.pdf",
+	}
+
+	//create PDF file
+	pdf_creator.CreatePDF(newPatient)
+
+	//Uppload PDF file to minIO
+	services.UploadNewFile(newPatient.PdfName)
+
 	ctx := context.Background()
 	kafkaURL := viper.GetString("mq.kafka.url")
 	topic := viper.GetString("mq.kafka.topic")
@@ -32,7 +52,30 @@ func main() {
 			log.Fatal("Error while closing writer")
 		}
 	}(writer)
-	kafka_impl.Write(ctx, writer, "Oh", "Test passed")
+	patientDataJson, err := json.Marshal(newPatient)
+	if err != nil {
+		log.Fatal(err)
+	}
+	kafka_impl.Write(ctx, writer, "DataForDocument", patientDataJson)
+	kafka_impl.Write(ctx, writer, "DataForDocument", patientDataJson)
+	kafka_impl.Write(ctx, writer, "DataForDocument", patientDataJson)
+	kafka_impl.Write(ctx, writer, "DataForDocument", patientDataJson)
+	kafka_impl.Write(ctx, writer, "DataForDocument", patientDataJson)
+	kafka_impl.Write(ctx, writer, "DataForDocument", patientDataJson)
+	kafka_impl.Write(ctx, writer, "DataForDocument", patientDataJson)
+	kafka_impl.Write(ctx, writer, "DataForDocument", patientDataJson)
+	kafka_impl.Write(ctx, writer, "DataForDocument", patientDataJson)
+	kafka_impl.Write(ctx, writer, "DataForDocument", patientDataJson)
+	kafka_impl.Write(ctx, writer, "DataForDocument", patientDataJson)
+	kafka_impl.Write(ctx, writer, "DataForDocument", patientDataJson)
+	kafka_impl.Write(ctx, writer, "DataForDocument", patientDataJson)
+	kafka_impl.Write(ctx, writer, "DataForDocument", patientDataJson)
+	kafka_impl.Write(ctx, writer, "DataForDocument", patientDataJson)
+	kafka_impl.Write(ctx, writer, "DataForDocument", patientDataJson)
+	kafka_impl.Write(ctx, writer, "DataForDocument", patientDataJson)
+	kafka_impl.Write(ctx, writer, "DataForDocument", patientDataJson)
+	kafka_impl.Write(ctx, writer, "DataForDocument", patientDataJson)
+	kafka_impl.Write(ctx, writer, "DataForDocument", patientDataJson)
 
 	reader := kafka_impl.GetKafkaReader(kafkaURL, topic, groupID)
 	defer func(reader *kafka.Reader) {
@@ -42,23 +85,7 @@ func main() {
 		}
 	}(reader)
 	go kafka_impl.Listen(ctx, reader)
+	for {
 
-	newPatient := &pdf_creator.PatientPersonalData{
-		Surname:     uniuri.NewLen(10),
-		Name:        "Иван",
-		Patronymic:  "Иванович",
-		Birthday:    "01.01.2000",
-		Gender:      "мужской",
-		HomeAddress: "Москва, Красная 213",
-		FirstDate:   "01.08.2021",
-		SecondDate:  "22.08.2021",
-		Vaccine:     "Спутник-V",
-		Pdf_name:    "passport.pdf",
 	}
-
-	//create PDF file
-	pdf_creator.CreatePDF(newPatient)
-
-	//Uppload PDF file to minIO
-	services.UploadNewFile(newPatient.Pdf_name)
 }
