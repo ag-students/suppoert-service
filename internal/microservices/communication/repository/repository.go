@@ -6,17 +6,16 @@ import (
 	"github.com/ag-students/support-service/internal/microservices/communication/repository/postgres"
 )
 
-type CommunicationRepository interface {
-	GetCommunication(id int) (models.Communication, error)
+type CommunicationHistoryRepository interface {
 	CreateCommunication(comm models.Communication) (int, error)
 }
 
 type Repository struct {
-	CommunicationRepository
+	CommunicationHistoryRepository
 }
 
 func NewRepository(db *sql.DB) *Repository {
 	return &Repository{
-		CommunicationRepository: postgres.NewCommunicationPSQL(db),
+		CommunicationHistoryRepository: postgres.NewCommunicationPSQL(db),
 	}
 }

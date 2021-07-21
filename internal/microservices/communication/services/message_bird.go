@@ -3,9 +3,9 @@ package services
 import (
 	"github.com/ag-students/support-service/internal/microservices/communication/models"
 	"github.com/ag-students/support-service/internal/microservices/communication/repository"
+	"github.com/ag-students/support-service/utils"
 	messagebird "github.com/messagebird/go-rest-api"
 	"github.com/messagebird/go-rest-api/sms"
-	"log"
 )
 
 type MessageBirdConfig struct {
@@ -38,11 +38,22 @@ func (r *MessageBird) NotifyBySMS(msg *models.SMSMessage) error {
 		msg.Body,
 		params,
 	); err != nil {
-		log.Panic("Cannot send SMS")
+		logger.Logger.Errorf("cant serve sms communication request for %s number", msg.PhoneNumber)
 		return err
 	}
 
-	log.Println("Sent SMS to " + msg.PhoneNumber)
+	logger.Logger.Info("Sent SMS to " + msg.PhoneNumber)
+
+	comm := models.Communication{
+		CommunicationType: "SMS",
+		Delayed:           false,
+		Phone:             msg.PhoneNumber,
+	}
+
+	if _, err := r.repo.CommunicationHistoryRepository.CreateCommunication(comm); err != nil {
+		logger.Logger.Errorf("cant create history record of sms communication: %s", err.Error())
+		return err
+	}
 
 	return nil
 }

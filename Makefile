@@ -25,6 +25,7 @@ build-docker:
 	docker build -t ${BASIC_IMAGE} -f ${DOCKER_PATH}/builder.Dockerfile.dev .
 	docker build -t communication${IMAGE_POSTFIX} -f ${DOCKER_PATH}/communication.Dockerfile.dev .
 	docker build -t docsgenerator${IMAGE_POSTFIX} -f ${DOCKER_PATH}/docsgenerator.Dockerfile.dev .
+
 app-setup-and-up: build-docker app-up
 
 app-up: build
@@ -73,8 +74,6 @@ test:
 
 packages-tidy:
 	go mod tidy
-
-# Kakafka
 
 kafka-bash:
 	docker exec -it kafka bash
