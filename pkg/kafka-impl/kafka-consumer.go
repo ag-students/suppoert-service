@@ -10,12 +10,6 @@ import (
 	"strings"
 )
 
-type DataForDocument struct {
-	surname    string
-	name       string
-	patronymic string
-}
-
 func GetKafkaReader(kafkaURL, topic, groupID string) *kafka.Reader {
 	brokers := strings.Split(kafkaURL, ",")
 	return kafka.NewReader(kafka.ReaderConfig{
