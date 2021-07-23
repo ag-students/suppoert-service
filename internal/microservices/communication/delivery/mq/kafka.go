@@ -1,15 +1,14 @@
 package mq
 
 import (
-	"fmt"
+	logger "github.com/ag-students/support-service/utils"
 	"github.com/segmentio/kafka-go"
-	"log"
-	"sync"
 	"time"
 )
 
 type KafkaConsumers struct {
 	KafkaSMSConsumer
+	KafkaEmailConsumer
 }
 
 type KafkaConfig struct {
@@ -18,8 +17,6 @@ type KafkaConfig struct {
 }
 
 func GetKafkaReader(cnf *KafkaConfig) *kafka.Reader {
-	fmt.Println("CONFIG: " + cnf.Brokers[0])
-
 	return kafka.NewReader(kafka.ReaderConfig{
 		Brokers:         cnf.Brokers,
 		Topic:           cnf.Topic,
@@ -31,20 +28,26 @@ func GetKafkaReader(cnf *KafkaConfig) *kafka.Reader {
 }
 
 func (r *KafkaConsumers) StartConsumers() {
-	wg := &sync.WaitGroup{}
-
-	wg.Add(1)
-	go func() {
+	go func () {
 		if err := r.KafkaSMSConsumer.ConsumeSMSRequests(); err != nil {
-			log.Panic("error while starting consumers: " + err.Error())
+			logger.Logger.Fatalf("error while starting consumers: %s", err.Error())
 		}
-		defer wg.Done()
-	}()
-	wg.Wait()
 
-	defer func() {
-		if err := r.KafkaSMSConsumer.reader.Close(); err != nil {
-			log.Printf("error while trying close sms consumer: " + err.Error())
+		defer func () {
+			if err := r.KafkaSMSConsumer.reader.Close(); err != nil {
+				logger.Logger.Errorf("error while trying close sms consumer: %s", err.Error())
+			}
+		}()
+	}()
+
+	go func () {
+		if err := r.KafkaEmailConsumer.ConsumeEmailRequests(); err != nil {
+			logger.Logger.Fatalf("error while starting email consumer: %s", err.Error())
 		}
+		defer func () {
+			if err := r.KafkaEmailConsumer.reader.Close(); err != nil {
+				logger.Logger.Errorf("error while trying close email consumer: %s", err.Error())
+			}
+		}()
 	}()
 }

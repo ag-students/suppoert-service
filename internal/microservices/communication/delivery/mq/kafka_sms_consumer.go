@@ -5,8 +5,8 @@ import (
 	"encoding/json"
 	"github.com/ag-students/support-service/internal/microservices/communication/models"
 	"github.com/ag-students/support-service/internal/microservices/communication/services"
+	"github.com/ag-students/support-service/utils"
 	"github.com/segmentio/kafka-go"
-	"log"
 )
 
 type KafkaSMSConsumer struct {
@@ -28,22 +28,24 @@ func (r *KafkaSMSConsumer) ConsumeSMSRequests() error {
 	for {
 		m, err := r.reader.ReadMessage(context.Background())
 		if err != nil {
-			log.Printf("error while receiving message: %s", err.Error())
+			logger.Logger.Errorf("error while receiving message: %s", err.Error())
 			continue
 		}
+
+		logger.Logger.Infof("handling incoming sms request: %s", m.Value)
 
 		var smsRequest models.SMSMessage
 
 		if err = json.Unmarshal(m.Value, &smsRequest); err != nil {
-			log.Printf("json message is invalid: %s", err.Error())
+			logger.Logger.Errorf("sms request is invalid: %s", err.Error())
 			continue
 		}
 
 		if err = r.serv.NotifyBySMS(&smsRequest); err != nil {
-			log.Printf("cant serve sms request: %s", err.Error())
+			logger.Logger.Errorf("cant serve sms request: %s", err.Error())
 			continue
 		}
 
-		log.Printf("message at topic/partition/offset %v/%v/%v: %s\n", m.Topic, m.Partition, m.Offset, string(m.Value))
+		logger.Logger.Infof("message at topic/partition/offset %v/%v/%v: %s\n", m.Topic, m.Partition, m.Offset, string(m.Value))
 	}
 }

@@ -13,5 +13,7 @@ require (
 	github.com/pressly/goose v2.7.0+incompatible
 	github.com/segmentio/kafka-go v0.4.17
 	github.com/spf13/viper v1.8.1
+	github.com/withmandala/go-log v0.1.0
+	github.com/xhit/go-simple-mail/v2 v2.10.0
 	golang.org/x/net v0.0.0-20210614182718-04defd469f4e // indirect
 )
