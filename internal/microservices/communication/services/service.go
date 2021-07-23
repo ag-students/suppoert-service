@@ -9,7 +9,7 @@ type SMSNotifier interface {
 }
 
 type EmailNotifier interface {
-	NotifyByEmail(msg *models.EmailMessage) (int, error)
+	NotifyByEmail(msg *models.EmailMessage) error
 }
 
 type Service struct {
