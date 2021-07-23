@@ -85,7 +85,4 @@ func main() {
 		}
 	}(reader)
 	go kafka_impl.Listen(ctx, reader)
-	for {
-
-	}
 }
