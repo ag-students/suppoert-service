@@ -7,7 +7,7 @@ type SMSMessage struct {
 }
 
 type EmailMessage struct {
-	EmailAddress 	string `json:"email"`
-	ReplyLink 		string `json:"reply_link"`
-	Originator		string `json:"originator"`
+	EmailAddress string `json:"email"`
+	ReplyLink    string `json:"reply_link"`
+	Originator   string `json:"originator"`
 }

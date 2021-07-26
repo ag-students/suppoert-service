@@ -13,7 +13,7 @@ import (
 func NewClient() *minio.Client {
 
 	//Warning! Can change after make app-setup-and-up
-	endpoint := "172.18.0.2:9000"
+	endpoint := "172.19.0.2:9001"
 
 	accessKeyID := os.Getenv("MINIO_ACCESS_KEY")
 	secretAccessKey := os.Getenv("MINIO_SECRET_ACCESS_KEY")
@@ -43,19 +43,46 @@ func NewBucket(bucketName string) {
 		if errBucketExists == nil && exists {
 			log.Printf("We already own %s\n", bucketName)
 		} else {
-			log.Fatalln("Failed to create bucket: ", err)
+			log.Fatalln("Failed to make bucket: ", err)
 		}
 	} else {
-		log.Printf("Successfully created %s\n", bucketName)
+		log.Printf("Successfully maked %s\n", bucketName)
+	}
+
+	policy := `{
+		"Version": "2012-10-17",
+		"Statement": [
+			{
+				"Effect": "Allow",
+				"Action": [
+					"admin:*"
+				]
+			},
+			{
+				"Effect": "Allow",
+				"Action": [
+					"s3:*"
+				],
+				"Resource": [
+					"arn:aws:s3:::*"
+				]
+			}
+		]
+	}`
+
+	err = minioClient.SetBucketPolicy(ctx, bucketName, policy)
+	if err != nil {
+		log.Println("Failed to set bucket policy:", err)
 	}
 }
 
 // Upload the file
-func UploadNewFile(objectName string) {
+func UploadNewFile(objectName string) (pdfLink string) {
 	minioClient := NewClient()
 	ctx := context.Background()
 	bucketName := "passports"
 	filePath := "./" + objectName
+	pdfLink = "localhost:9000/passports/" + objectName
 	contentType := "application/" + objectName[len(objectName)-3:]
 	info, err := minioClient.FPutObject(ctx, bucketName, objectName, filePath, minio.PutObjectOptions{ContentType: contentType})
 	if err != nil {
@@ -63,4 +90,17 @@ func UploadNewFile(objectName string) {
 	} else {
 		log.Printf("Successfully uploaded %s of size %d\n", objectName, info.Size)
 	}
+	return pdfLink
+}
+
+// Fetch metadata of an object
+func StatObject(objectName string) {
+	minioClient := NewClient()
+	ctx := context.Background()
+	bucketName := "passports"
+	objInfo, err := minioClient.StatObject(ctx, bucketName, objectName, minio.StatObjectOptions{})
+	if err != nil {
+		fmt.Println("Failed to fetch metadata of object:", err)
+	}
+	fmt.Println(objInfo)
 }

@@ -10,15 +10,15 @@ import (
 )
 
 type KafkaEmailConsumer struct {
-	serv 	services.EmailNotifier
-	cnf  	*KafkaConfig
-	reader 	*kafka.Reader
+	serv   services.EmailNotifier
+	cnf    *KafkaConfig
+	reader *kafka.Reader
 }
 
 func NewKafkaEmailConsumer(serv *services.Service, cnf *KafkaConfig) KafkaEmailConsumer {
 	return KafkaEmailConsumer{
-		serv: 	serv.EmailNotifier,
-		cnf: 	cnf,
+		serv: serv.EmailNotifier,
+		cnf:  cnf,
 	}
 }
 

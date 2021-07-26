@@ -1,8 +1,8 @@
 package models
 
 type Communication struct {
-	CommunicationType 	string
-	Delayed				bool
-	Phone				string
-	Email 				string
+	CommunicationType string
+	Delayed           bool
+	Phone             string
+	Email             string
 }

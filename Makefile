@@ -13,8 +13,9 @@ MIGRATIONS_DIR=./db/migrations
 BASIC_IMAGE=dep
 IMAGE_POSTFIX=-image
 
-build:
+delete-pdf:
 	sudo rm -rf *.pdf
+build:
 	GOOS=linux GOARCH=arm go build -o .bin/communication cmd/communication/main.go
 	GOOS=linux GOARCH=arm go build -o .bin/docsgenerator cmd/docsgenerator/main.go
 	chmod ugo+x .bin/communication
@@ -28,8 +29,8 @@ build-docker:
 
 app-setup-and-up: build-docker app-up
 
-app-up: build
-	docker-compose up
+app-up: build delete-pdf 
+		docker-compose up
 
 all: app-setup-and-up
 

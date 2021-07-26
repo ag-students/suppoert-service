@@ -23,7 +23,7 @@ func (r *CommunicationPSQL) CreateCommunication(comm models.Communication) (int,
 	}
 
 	var itemId int
-	createItemQuery := fmt.Sprintf("INSERT INTO %s (communication_type, delayed, phone_number, email) " +
+	createItemQuery := fmt.Sprintf("INSERT INTO %s (communication_type, delayed, phone_number, email) "+
 		"values ($1, $2, $3, $4) RETURNING id", communicationHistoryTableName)
 
 	row := tx.QueryRow(createItemQuery, comm.CommunicationType, comm.Delayed, comm.Phone, comm.Email)

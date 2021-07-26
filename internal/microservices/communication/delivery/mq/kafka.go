@@ -28,23 +28,23 @@ func GetKafkaReader(cnf *KafkaConfig) *kafka.Reader {
 }
 
 func (r *KafkaConsumers) StartConsumers() {
-	go func () {
+	go func() {
 		if err := r.KafkaSMSConsumer.ConsumeSMSRequests(); err != nil {
 			logger.Logger.Fatalf("error while starting consumers: %s", err.Error())
 		}
 
-		defer func () {
+		defer func() {
 			if err := r.KafkaSMSConsumer.reader.Close(); err != nil {
 				logger.Logger.Errorf("error while trying close sms consumer: %s", err.Error())
 			}
 		}()
 	}()
 
-	go func () {
+	go func() {
 		if err := r.KafkaEmailConsumer.ConsumeEmailRequests(); err != nil {
 			logger.Logger.Fatalf("error while starting email consumer: %s", err.Error())
 		}
-		defer func () {
+		defer func() {
 			if err := r.KafkaEmailConsumer.reader.Close(); err != nil {
 				logger.Logger.Errorf("error while trying close email consumer: %s", err.Error())
 			}

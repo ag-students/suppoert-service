@@ -264,4 +264,3 @@ func ConfirmEmailTemplate(replyLink string) string {
 </html>
 `
 }
-

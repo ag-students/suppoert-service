@@ -11,15 +11,15 @@ import (
 )
 
 type SMTPConfig struct {
-	Host 		string
-	Port 		int
-	Username 	string
-	Password 	string
+	Host     string
+	Port     int
+	Username string
+	Password string
 }
 
 type EmailNotificator struct {
-	repo 		*repository.Repository
-	smtpClient 	*mail.SMTPClient
+	repo       *repository.Repository
+	smtpClient *mail.SMTPClient
 }
 
 func NewEmailNotificator(repo *repository.Repository, smtpConfig *SMTPConfig) *EmailNotificator {
@@ -40,7 +40,7 @@ func NewEmailNotificator(repo *repository.Repository, smtpConfig *SMTPConfig) *E
 	}
 
 	return &EmailNotificator{
-		repo: repo,
+		repo:       repo,
 		smtpClient: client,
 	}
 }
@@ -59,7 +59,7 @@ func (r *EmailNotificator) NotifyByEmail(msg *models.EmailMessage) error {
 	comm := models.Communication{
 		CommunicationType: "EMAIL",
 		Delayed:           false,
-		Email: 			   msg.EmailAddress,
+		Email:             msg.EmailAddress,
 	}
 
 	if _, err := r.repo.CommunicationHistoryRepository.CreateCommunication(comm); err != nil {

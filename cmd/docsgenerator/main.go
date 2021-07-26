@@ -38,7 +38,10 @@ func main() {
 	pdf_creator.CreatePDF(newPatient)
 
 	//Uppload PDF file to minIO
-	services.UploadNewFile(newPatient.PdfName)
+	// pdfLink := services.UploadNewFile(newPatient.PdfName)
+	// fmt.Println(pdfLink)
+
+	services.NewBucket("testbucket")
 
 	ctx := context.Background()
 	kafkaURL := viper.GetString("mq.kafka.url")
