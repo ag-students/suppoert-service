@@ -14,11 +14,11 @@ func NewKafkaWriter(kafkaURL, topic string) *kafka.Writer {
 	}
 }
 
-func Write(ctx context.Context, writer *kafka.Writer, key, value string) {
+func Write(ctx context.Context, writer *kafka.Writer, key string, value []byte) {
 	fmt.Println("start producing ... !!")
 	msg := kafka.Message{
 		Key:   []byte(key),
-		Value: []byte(value),
+		Value: value,
 	}
 	err := writer.WriteMessages(ctx, msg)
 	if err != nil {

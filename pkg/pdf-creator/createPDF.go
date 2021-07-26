@@ -16,7 +16,7 @@ type PatientPersonalData struct {
 	FirstDate   string
 	SecondDate  string
 	Vaccine     string
-	Pdf_name    string
+	PdfName     string
 }
 
 func CreatePDF(newPatient *PatientPersonalData) {
@@ -81,7 +81,7 @@ func CreatePDF(newPatient *PatientPersonalData) {
 	pdf.SetXY(45, 212)
 	pdf.Cell(20, -23, tr("Не явлется официальным документом! Разработано исключительно в образовательных целях"))
 
-	err = pdf.OutputFileAndClose(newPatient.Pdf_name)
+	err = pdf.OutputFileAndClose(newPatient.PdfName)
 	if err != nil {
 		fmt.Println("⚠️  Could not save PDF:", err)
 	} else {
