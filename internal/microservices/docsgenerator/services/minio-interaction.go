@@ -2,18 +2,17 @@ package services
 
 import (
 	"context"
-	"fmt"
+	logger "github.com/ag-students/support-service/utils"
 	"github.com/minio/minio-go/v7"
 	"github.com/minio/minio-go/v7/pkg/credentials"
-	"log"
 	"os"
 )
 
-// Initialize minio client object.
+// Initialize miniorepo client object.
 func NewClient() *minio.Client {
 
 	//Warning! Can change after make app-setup-and-up
-	endpoint := "172.18.0.2:9000"
+	endpoint := "nginx:9000"
 
 	accessKeyID := os.Getenv("MINIO_ACCESS_KEY")
 	secretAccessKey := os.Getenv("MINIO_SECRET_ACCESS_KEY")
@@ -24,9 +23,9 @@ func NewClient() *minio.Client {
 		Secure: useSSL,
 	})
 	if err != nil {
-		log.Fatalln("Failed to create minio client:", err)
+		logger.Logger.Errorf("Failed to create miniorepo client: %s", err.Error())
 	} else {
-		fmt.Println("Successfully created minio client")
+		logger.Logger.Info("Successfully created miniorepo client")
 	}
 	return minioClient
 }
@@ -41,12 +40,12 @@ func NewBucket(bucketName string) {
 		// Check to see if we already own this bucket (which happens if you run this twice)
 		exists, errBucketExists := minioClient.BucketExists(ctx, bucketName)
 		if errBucketExists == nil && exists {
-			log.Printf("We already own %s\n", bucketName)
+			logger.Logger.Info("we already own: %s", bucketName)
 		} else {
-			log.Fatalln("Failed to create bucket: ", err)
+			logger.Logger.Errorf("failed to create bucket: %s", err.Error())
 		}
 	} else {
-		log.Printf("Successfully created %s\n", bucketName)
+		logger.Logger.Info("successfully created: %s", bucketName)
 	}
 }
 
@@ -59,8 +58,8 @@ func UploadNewFile(objectName string) {
 	contentType := "application/" + objectName[len(objectName)-3:]
 	info, err := minioClient.FPutObject(ctx, bucketName, objectName, filePath, minio.PutObjectOptions{ContentType: contentType})
 	if err != nil {
-		log.Fatalln("Failed to upload:", err)
+		logger.Logger.Errorf("Failed to upload:", err.Error())
 	} else {
-		log.Printf("Successfully uploaded %s of size %d\n", objectName, info.Size)
+		logger.Logger.Infof("Successfully uploaded %s of size %d\n", objectName, info.Size)
 	}
 }

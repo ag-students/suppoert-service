@@ -7,6 +7,7 @@ import (
 	"github.com/ag-students/support-service/internal/microservices/communication/services/email_templates"
 	logger "github.com/ag-students/support-service/utils"
 	"github.com/xhit/go-simple-mail/v2"
+	"os"
 	"time"
 )
 
@@ -51,6 +52,44 @@ func (r *EmailNotificator) NotifyByEmail(msg *models.EmailMessage) error {
 		AddTo(msg.EmailAddress).
 		SetSubject("Ваш код подтверждения")
 	email.SetBody(mail.TextHTML, email_templates.ConfirmEmailTemplate(msg.ReplyLink))
+
+	if email.Error != nil {
+		logger.Logger.Error(email.Error)
+	}
+
+	comm := models.Communication{
+		CommunicationType: "EMAIL",
+		Delayed:           false,
+		Email: 			   msg.EmailAddress,
+	}
+
+	if _, err := r.repo.CommunicationHistoryRepository.CreateCommunication(comm); err != nil {
+		logger.Logger.Errorf("cant create history record of sms communication: %s", err.Error())
+		return err
+	}
+
+	if err := email.Send(r.smtpClient); err != nil {
+		logger.Logger.Error(err.Error())
+		return err
+	} else {
+		logger.Logger.Info("Email Sent")
+		return nil
+	}
+}
+
+func (r *EmailNotificator) NotifyByEmailPass(msg *models.EmailPassportMessage) error {
+	email := mail.NewMSG()
+	email.SetFrom("Covid-19 Protection <noreply@shirnis-koronoy.ga>").
+		AddTo(msg.EmailAddress).
+		SetSubject("Ваш код подтверждения")
+	email.SetBody(mail.TextHTML, email_templates.ConfirmEmailTemplate(msg.ReplyLink))
+
+	root, err := os.Getwd()
+	if err != nil {
+		logger.Logger.Errorf("cant stat root dir: %s", err.Error())
+	}
+
+	email.Attach(&mail.File{FilePath: root + "tmp/" + msg.FileName, Name:"passport.pdf", Inline: true})
 
 	if email.Error != nil {
 		logger.Logger.Error(email.Error)

@@ -26,17 +26,17 @@ services:
     container_name: minio1
     hostname: minio1
     volumes:
-      - ./minio/data1-1:/data1
-      - ./minio/data1-2:/data2
+      - ./miniorepo/data1-1:/data1
+      - ./miniorepo/data1-2:/data2
     expose:
       - "9000"
       - "9001"
     environment:
       - MINIO_ROOT_USER=${MINIO_ROOT_USER}
       - MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD}  
-    command: server --console-address ":9001" http://minio{1...2}/data{1...2}
+    command: server --console-address ":9001" http://miniorepo{1...2}/data{1...2}
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      test: ["CMD", "curl", "-f", "http://localhost:9000/miniorepo/health/live"]
       interval: 30s
       timeout: 20s
       retries: 3
@@ -46,17 +46,17 @@ services:
     container_name: minio2
     hostname: minio2
     volumes:
-      - ./minio/data2-1:/data1
-      - ./minio/data2-2:/data2
+      - ./miniorepo/data2-1:/data1
+      - ./miniorepo/data2-2:/data2
     expose:
       - "9000"
       - "9001"
     environment:
       - MINIO_ROOT_USER=${MINIO_ROOT_USER}
       - MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD}
-    command: server --console-address ":9001" http://minio{1...2}/data{1...2}
+    command: server --console-address ":9001" http://miniorepo{1...2}/data{1...2}
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      test: ["CMD", "curl", "-f", "http://localhost:9000/miniorepo/health/live"]
       interval: 30s
       timeout: 20s
       retries: 3

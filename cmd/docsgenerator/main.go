@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
+	logger "github.com/ag-students/support-service/utils"
 	"log"
 
 	"github.com/ag-students/support-service/config"
@@ -16,6 +17,7 @@ import (
 )
 
 func main() {
+	logger.InitLogger()
 	// time.Sleep(time.Second * 5)
 	fmt.Println("Hello, World! I generate docs")
 	config.Init()
@@ -59,6 +61,7 @@ func main() {
 	//create PDF file
 	pdf_creator.CreatePDF(newPatient)
 
+	logger.Logger.Info("uploading file to miniorepo...")
 	//Uppload PDF file to minIO
 	services.UploadNewFile(newPatient.Pdf_name)
 }

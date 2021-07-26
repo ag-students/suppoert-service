@@ -9,6 +9,7 @@ import (
 type KafkaConsumers struct {
 	KafkaSMSConsumer
 	KafkaEmailConsumer
+	KafkaEmailPassportConsumer
 }
 
 type KafkaConfig struct {
@@ -47,6 +48,17 @@ func (r *KafkaConsumers) StartConsumers() {
 		defer func () {
 			if err := r.KafkaEmailConsumer.reader.Close(); err != nil {
 				logger.Logger.Errorf("error while trying close email consumer: %s", err.Error())
+			}
+		}()
+	}()
+
+	go func () {
+		if err := r.KafkaEmailPassportConsumer.ConsumeEmailPassportRequests(); err != nil {
+			logger.Logger.Fatalf("error while starting email pass consumer: %s", err.Error())
+		}
+		defer func () {
+			if err := r.KafkaEmailPassportConsumer.reader.Close(); err != nil {
+				logger.Logger.Errorf("error while trying close email pass consumer: %s", err.Error())
 			}
 		}()
 	}()

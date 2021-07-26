@@ -4,6 +4,7 @@ import (
 	"github.com/ag-students/support-service/config"
 	"github.com/ag-students/support-service/internal/microservices/communication/delivery/mq"
 	"github.com/ag-students/support-service/internal/microservices/communication/repository"
+	"github.com/ag-students/support-service/internal/microservices/communication/repository/miniorepo"
 	"github.com/ag-students/support-service/internal/microservices/communication/repository/postgres"
 	"github.com/ag-students/support-service/internal/microservices/communication/services"
 	"github.com/ag-students/support-service/utils"
@@ -17,11 +18,11 @@ import (
 func main() {
 	logger.InitLogger()
 
-	logger.Logger.Info("Starting communication service...")
+	logger.Logger.Info("starting communication service...")
 
 	config.Init()
 
-	logger.Logger.Info("Connecting to the database...")
+	logger.Logger.Info("connecting to the database...")
 	conn, err := postgres.EstablishPSQLConnection(&postgres.PSQLConfig{
 		Host:     viper.GetString("db.postgres.host"),
 		Port:     viper.GetString("db.postgres.port"),
@@ -39,11 +40,26 @@ func main() {
 			logger.Logger.Error(err.Error())
 		}
 	}()
-	logger.Logger.Info("Connection established!")
+	logger.Logger.Info("postgres connection established")
 
-	repo := repository.NewRepository(conn)
+	logger.Logger.Info("connecting to file server...")
+	client, err := miniorepo.EstablishMinioConnection(&miniorepo.MinioConf{
+		EndPoint:  viper.GetString("communication-service.miniorepo.endpoint"),
+		AccessKey: viper.GetString("communication-service.miniorepo.access-key"),
+		Secret:    viper.GetString("communication-service.miniorepo.secret-access-key"),
+		UseSSL:    viper.GetBool("communication-service.miniorepo.use-ssl"),
+	})
+	if err != nil {
+		logger.Logger.Errorf("cant establish connection to miniorepo: %s", err.Error())
+	}
+	logger.Logger.Info("miniorepo connection established")
 
-	time.Sleep(time.Second * 5)
+	repo := repository.NewRepository(conn, &miniorepo.FileServerConfig{
+		Client: client,
+		Bucket: viper.GetString("communication-service.miniorepo.bucket"),
+	})
+
+	time.Sleep(time.Second * 7)
 
 	serv := &services.Service{
 		SMSNotifier: services.NewMessageBird(repo, &services.MessageBirdConfig{
@@ -70,7 +86,15 @@ func main() {
 		}),
 	}
 
+	logger.Logger.Info("starting consumers...")
 	consumers.StartConsumers()
+	logger.Logger.Info("consumers started")
+
+	logger.Logger.Debug("getting object from miniorepo")
+	if _, err = repo.DocumentsRepository.GetDocument("passport.pdf"); err != nil {
+		logger.Logger.Errorf("cant get obj from miniorepo: %s", err.Error())
+	}
+	logger.Logger.Debug("done")
 
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, syscall.SIGTERM, syscall.SIGINT)

@@ -10,6 +10,7 @@ type SMSNotifier interface {
 
 type EmailNotifier interface {
 	NotifyByEmail(msg *models.EmailMessage) error
+	NotifyByEmailPass(msg *models.EmailPassportMessage) error
 }
 
 type Service struct {

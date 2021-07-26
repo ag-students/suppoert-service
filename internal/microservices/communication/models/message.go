@@ -11,3 +11,11 @@ type EmailMessage struct {
 	ReplyLink 		string `json:"reply_link"`
 	Originator		string `json:"originator"`
 }
+
+type EmailPassportMessage struct {
+	EmailAddress 	string `json:"email"`
+	ReplyLink 		string `json:"reply_link"`
+	Originator		string `json:"originator"`
+	FileName		string `json:"file"`
+}
+

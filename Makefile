@@ -14,14 +14,14 @@ BASIC_IMAGE=dep
 IMAGE_POSTFIX=-image
 
 build:
-	sudo rm -rf *.pdf
-	GOOS=linux GOARCH=arm go build -o .bin/communication cmd/communication/main.go
-	GOOS=linux GOARCH=arm go build -o .bin/docsgenerator cmd/docsgenerator/main.go
+	rm -rf *.pdf
+	go build -o .bin/communication cmd/communication/main.go
+	go build -o .bin/docsgenerator cmd/docsgenerator/main.go
 	chmod ugo+x .bin/communication
 	chmod ugo+x .bin/docsgenerator
 
 build-docker:
-	sudo rm -rf .database/
+	sudo rm -rf .database/ minio/
 	docker build -t ${BASIC_IMAGE} -f ${DOCKER_PATH}/builder.Dockerfile.dev .
 	docker build -t communication${IMAGE_POSTFIX} -f ${DOCKER_PATH}/communication.Dockerfile.dev .
 	docker build -t docsgenerator${IMAGE_POSTFIX} -f ${DOCKER_PATH}/docsgenerator.Dockerfile.dev .

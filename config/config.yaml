@@ -18,6 +18,13 @@ communication-service:
     broker: "kafka:9093"
     sms-topic: "sms"
     email-topic: "email"
+    email-pass: "email-pass"
+  minio:
+    endpoint: "nginx:9000"
+    access-key: "miniorepo"
+    secret-access-key: "minio123"
+    use-ssl: "false"
+    bucket: "passports"
   message-bird:
     access-key: "OnxQzf9lwc5W9lfXFLurKx3jU"
     params: "MyReference"
